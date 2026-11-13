@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Student Menu | Canteen Pre-Order{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">LESS QUEUE. MORE BREAK TIME.</p>
+    <h1>Order your lunch<br><span>before the bell.</span></h1>
+    <p>Choose your food, submit your order and collect it from the canteen.</p>
+  </div>
+  <div class="hero-icon">🥪</div>
+</section>
+
+<form action="{{ url_for('place_order') }}" method="post" id="order-form">
+  <div class="section-heading">
+    <div><p class="eyebrow">TODAY'S MENU</p><h2>Choose your favourites</h2></div>
+    <div class="cart-total">Total <strong id="total">$0.00</strong></div>
+  </div>
+  <div class="menu-grid">
+    {% for item in menu %}
+    <article class="menu-card">
+      <div class="food-icon">
+        {% if item.category == 'Sandwiches' %}🥪{% elif item.category == 'Hot food' %}🥪{% elif item.category == 'Drinks' %}🧃{% else %}🍎{% endif %}
+      </div>
+      <div class="menu-info">
+        <span class="category">{{ item.category }}</span>
+        <h3>{{ item.name }}</h3>
+        <strong>${{ '%.2f'|format(item.price) }}</strong>
+      </div>
+      <label class="quantity">Qty
+        <input type="number" min="0" max="20" value="0" name="item_{{ item.id }}"
+               data-price="{{ item.price }}" class="qty-input" aria-label="Quantity for {{ item.name }}">
+      </label>
+    </article>
+    {% endfor %}
+  </div>
+
+  <section class="checkout panel">
+    <div><p class="eyebrow">FINAL STEP</p><h2>Your details</h2><p class="muted">Use fictional details while testing this school prototype.</p></div>
+    <div class="details-grid">
+      <label>Student name<input name="student_name" required maxlength="60" placeholder="e.g. Alex Smith"></label>
+      <label>Class / year group<input name="student_class" required maxlength="30" placeholder="e.g. Year 12"></label>
+    </div>
+    <div class="checkout-bottom">
+      <span>Order total <strong id="checkout-total">$0.00</strong></span>
+      <button class="button" type="submit">Submit order <span>→</span></button>
+    </div>
+  </section>
+</form>
+<script>
+  const inputs = document.querySelectorAll(".qty-input");
+  function updateTotal() {
+    let total = 0;
+    inputs.forEach(input => {
+      const quantity = Math.max(0, Number(input.value) || 0);
+      total += quantity * Number(input.dataset.price);
+    });
+    document.getElementById("total").textContent = "$" + total.toFixed(2);
+    document.getElementById("checkout-total").textContent = "$" + total.toFixed(2);
+  }
+  inputs.forEach(input => input.addEventListener("input", updateTotal));
+</script>
+{% endblock %}

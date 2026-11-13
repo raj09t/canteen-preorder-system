@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Staff Login{% endblock %}
+{% block content %}
+<section class="login-wrap panel">
+  <p class="eyebrow">CANTEEN TEAM</p>
+  <h1>Staff login</h1>
+  <p class="muted">Sign in to view and manage student orders.</p>
+  <form method="post" class="login-form">
+    <label>Username<input name="username" required autocomplete="username"></label>
+    <label>Password<input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="button" type="submit">Log in →</button>
+  </form>
+  <p class="demo-note"><strong>Demo login:</strong> username <code>staff</code> · password <code>ChangeMe123!</code></p>
+</section>
+{% endblock %}

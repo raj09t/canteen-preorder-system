@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed{% endblock %}
+{% block content %}
+<section class="confirmation panel">
+  <div class="success-icon">✓</div>
+  <p class="eyebrow">ORDER SUBMITTED</p>
+  <h1>Thanks, {{ student_name }}!</h1>
+  <p>Your canteen order has been received.</p>
+  <div class="order-number">
+    <span>YOUR ORDER NUMBER</span>
+    <strong>{{ order_number }}</strong>
+  </div>
+  <div class="receipt">
+    <h3>Order summary</h3>
+    {% for item in order_items %}<p>{{ item }}</p>{% endfor %}
+    <hr><p class="receipt-total">Total <strong>${{ '%.2f'|format(total) }}</strong></p>
+  </div>
+  <p class="muted">This is a prototype. No payment has been taken.</p>
+  <a class="button" href="{{ url_for('home') }}">Back to menu</a>
+</section>
+{% endblock %}

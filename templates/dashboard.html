@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-title">
+  <div><p class="eyebrow">CANTEEN MANAGEMENT</p><h1>Staff dashboard</h1><p class="muted">View incoming orders and update their progress.</p></div>
+  <a class="button secondary" href="{{ url_for('staff_logout') }}">Log out</a>
+</div>
+<section class="panel">
+  <div class="section-heading"><div><p class="eyebrow">LIVE ORDER LIST</p><h2>Student orders</h2></div><span class="pill">{{ orders|length }} total</span></div>
+  {% if orders %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Order</th><th>Student</th><th>Items</th><th>Total</th><th>Status</th><th>Update</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+    <tr>
+      <td><strong>{{ order.order_number }}</strong><small>{{ order.created_at }}</small></td>
+      <td>{{ order.student_name }}<small>{{ order.student_class }}</small></td>
+      <td class="items-cell">{{ order.items }}</td>
+      <td>${{ '%.2f'|format(order.total) }}</td>
+      <td><span class="status">{{ order.status }}</span></td>
+      <td><form class="status-form" method="post" action="{{ url_for('update_status', order_id=order.id) }}">
+        <select name="status" aria-label="New status for {{ order.order_number }}">
+          {% for status in ['Received', 'Preparing', 'Ready for collection', 'Collected'] %}
+          <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status }}</option>
+          {% endfor %}
+        </select><button class="small-button">Save</button>
+      </form></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<p class="empty">No orders have been submitted yet. New student orders will appear here.</p>{% endif %}
+</section>
+
+<section class="panel menu-admin">
+  <p class="eyebrow">MENU SETTINGS</p><h2>Manage menu items</h2>
+  <form class="add-menu-form" method="post" action="{{ url_for('add_menu_item') }}">
+    <label>Item name<input name="name" required placeholder="e.g. Veggie sandwich"></label>
+    <label>Price ($)<input name="price" type="number" min="0" step="0.01" required placeholder="5.50"></label>
+    <label>Category<input name="category" required placeholder="e.g. Sandwiches"></label>
+    <button class="button" type="submit">Add item</button>
+  </form>
+  <div class="menu-admin-list">
+    {% for item in menu %}
+    <div class="menu-admin-row">
+      <span>{{ item.name }} <small>{{ item.category }} · ${{ '%.2f'|format(item.price) }}</small></span>
+      <form method="post" action="{{ url_for('toggle_menu_item', item_id=item.id) }}">
+        <button class="small-button {{ 'muted-button' if item.available else '' }}">{{ 'Hide' if item.available else 'Show' }}</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
